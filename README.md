@@ -1,6 +1,6 @@
 # Tab Tidy
 
-A Chrome extension to find and close duplicate tabs across **all Chrome windows**, prevent new duplicates with Shield, and save inactive tabs in a searchable parking lot. Includes Undo, a live toolbar count, and optional tracking-parameter matching.
+A Chrome extension to browse open tabs by domain and full page title, find and close duplicates across **all Chrome windows**, prevent new duplicates with Shield, and save inactive tabs in a searchable parking lot. Includes Undo, a live toolbar count, and optional tracking-parameter matching.
 
 ## Install
 
@@ -11,9 +11,22 @@ A Chrome extension to find and close duplicate tabs across **all Chrome windows*
 
 No build or dependency installation needed. Chrome 121 or newer (for tab inactivity timestamps).
 
-The toolbar popup keeps a 420px minimum width. Long titles and URLs wrap inside that width.
+The toolbar popup keeps a 420px minimum width and expands to 760px while the tab finder is open. Long titles and URLs wrap inside the available width.
 
-Already installed? Reload Tab Tidy in `chrome://extensions`. Version 1.2 uses the existing `tabs` and `storage` permissions; no additional permissions are needed.
+Already installed? Reload Tab Tidy in `chrome://extensions`. Version 1.3 uses the existing `tabs` and `storage` permissions; no additional permissions are needed.
+
+## Find a tab
+
+Click **Find a tab** to browse your open tabs without remembering a search term. The finder starts with the current tab's domain selected; **All domains** is used when the current page has no listed domain.
+
+- Select a domain on the left to see every matching tab's full title, URL, and window on the right. Long lists scroll; titles are never truncated or hidden behind Show more.
+- Click a title to activate that existing tab and focus its window. The finder does not navigate, reload, close, or rearrange tabs.
+- **Filter titles** optionally narrows the list by title, URL, or ticket ID. Hiding the filter clears it and restores all titles.
+- Domains show tab counts. Current-tab, private, pinned, loading, and audio states appear on rows. Subdomains remain separate; internal browser pages and local files have their own categories. Tab Tidy's own pages are excluded.
+- Titles and counts update as tabs open, close, navigate, or move. A vanished domain falls back to All domains. A closed selection shows an error and refreshes the list.
+- Use **Tab** to reach controls. In the domain sidebar, **↑/↓** selects the previous/next domain and **Home/End** selects the first/last. In the title list, those keys move between titles; **Enter** switches to the focused tab. **Esc** or **×** closes the finder and restores the normal popup width.
+
+All grouping and optional filtering happen locally using existing tab metadata. No page content is read or captured.
 
 ## Use
 
@@ -77,6 +90,8 @@ The matching checkbox follows Modern Web Guidance’s `forms` guidance: “alway
 
 The `typography` guidance recommends “Use `overflow-wrap: break-word` (or `anywhere`) to contain long URLs.” Cards use `overflow-wrap: anywhere` and grid tracks that can shrink so long links cannot create a horizontal scrollbar.
 
-`npm run test:popup-size` checks Chrome’s actual toolbar popup at its native size and verifies a narrow initial viewport cannot collapse the 420px layout.
+`npm run test:finder` checks the finder with real Chrome tabs: current-domain selection, full titles, optional filtering, keyboard interaction, live updates, closed-tab recovery, cross-window switching without navigation, layout, and accessibility. `npm run test:popup-size` checks Chrome’s actual toolbar popup, including expansion to 760px and size/focus restoration after closing the finder.
+
+The finder follows Modern Web Guidance's `dialog` guidance: “Use the native `<dialog>` element” and “DON'T add `role="dialog"`, `aria-modal`, a focus trap”. Chrome provides modal focus handling and Escape; the finder includes a visible close button, an accessible heading, and scroll containment.
 
 Manual Chrome check: open three copies of one URL in two windows, plus a different query string or fragment. The popup should report two duplicates. Close one individually, then close all; the unique URL and one matching copy should remain. Repeat with a pinned copy, and check the empty state after cleanup.

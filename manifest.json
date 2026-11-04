@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Tab Tidy — Close Duplicate Tabs",
-  "version": "1.2.2",
-  "description": "Clear duplicate tabs, prevent new duplicates with Shield, and park inactive tabs in a searchable shelf. Includes Undo and a live count.",
+  "version": "1.3.0",
+  "description": "Find tabs by domain and page title, clear duplicates, prevent new duplicates with Shield, and park inactive tabs. Includes Undo.",
   "minimum_chrome_version": "121",
   "permissions": ["tabs", "storage"],
   "background": { "service_worker": "background.js", "type": "module" },

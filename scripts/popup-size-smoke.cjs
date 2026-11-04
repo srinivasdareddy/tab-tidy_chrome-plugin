@@ -48,9 +48,45 @@ const assert = require('node:assert/strict');
     assert.equal(size.body, 420);
     assert.equal(size.root, 420);
     assert.ok(size.scroll <= size.client + 1, 'Popup content must not overflow horizontally');
+    for (const [commandId, action, width] of [
+      [2, "document.getElementById('open-tab-finder').focus(); document.getElementById('open-tab-finder').click()", 760],
+      [3, "document.getElementById('finder-close').click()", 420],
+    ]) {
+      const reply = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => { client.off('Target.receivedMessageFromTarget', listener); reject(new Error('Finder sizing timed out')); }, 5000);
+        const listener = event => {
+          if (event.sessionId !== sessionId) return;
+          const result = JSON.parse(event.message);
+          if (result.id !== commandId) return;
+          clearTimeout(timer);
+          client.off('Target.receivedMessageFromTarget', listener);
+          resolve(result);
+        };
+        client.on('Target.receivedMessageFromTarget', listener);
+      });
+      await client.send('Target.sendMessageToTarget', { sessionId, message: JSON.stringify({ id: commandId, method: 'Runtime.evaluate', params: {
+        expression: `(async () => { ${action}; await new Promise(resolve => setTimeout(resolve, 300));
+          const dialog = document.getElementById('tab-finder'); const rect = dialog.getBoundingClientRect();
+          return { viewport: innerWidth, height: innerHeight, body: document.body.getBoundingClientRect().width,
+            open: dialog.open, left: rect.left, right: rect.right, bottom: rect.bottom,
+            active: document.activeElement.id, scroll: dialog.scrollWidth, client: dialog.clientWidth };
+        })()`, awaitPromise: true, returnByValue: true,
+      } }) });
+      const result = await reply;
+      const measured = result.result?.result?.value;
+      assert.ok(measured, JSON.stringify(result));
+      console.log('Finder toolbar popup:', measured);
+      assert.equal(measured.body, width);
+      assert.ok(measured.viewport >= width && measured.viewport <= width + 20);
+      assert.equal(measured.open, width === 760);
+      if (measured.open) {
+        assert.ok(measured.left >= 0 && measured.right <= measured.viewport && measured.bottom <= measured.height, 'Finder must fit actual toolbar bounds');
+        assert.ok(measured.scroll <= measured.client + 1, 'Finder must not overflow horizontally');
+      } else assert.equal(measured.active, 'open-tab-finder', 'Close restores launcher focus');
+    }
     await page.setViewportSize({ width: 160, height: 600 });
     assert.equal(await page.evaluate(() => document.body.getBoundingClientRect().width), 420);
-    console.log('PASS: real toolbar content is 420px; a narrow initial viewport cannot shrink it.');
+    console.log('PASS: actual toolbar stays 420px, expands to 760px for finder, restores size/focus on close, and fits all content.');
   } finally {
     await context.close();
     await rm(profile, { recursive: true, force: true });

@@ -17,6 +17,7 @@
     <button id="show-duplicates" type="button" aria-pressed="true" aria-controls="duplicates-panel">Duplicates</button>
     <button id="show-parking" type="button" aria-pressed="false" aria-controls="parking-panel">Parking lot <span id="parked-count">0</span></button>
   </nav>
+  <button id="open-tab-finder" class="finder-launch" type="button" aria-haspopup="dialog" aria-controls="tab-finder"><span>Find a tab</span><span>Browse by domain ↗</span></button>
 
   <main>
     <section id="duplicates-panel" aria-label="Duplicate cleaner">
@@ -70,5 +71,18 @@
     </div>
     <p id="footer-hint">Pinned copy kept first, then an active copy.</p>
   </footer>
+  <dialog id="tab-finder" class="finder" aria-labelledby="finder-title">
+    <header class="finder-header">
+      <div><p class="eyebrow">TAB TIDY · ALL WINDOWS</p><h2 id="finder-title">Find a tab</h2><p class="finder-intro">Pick a domain. Choose a title.</p></div>
+      <form method="dialog"><button id="finder-close" class="finder-close" type="submit" aria-label="Close tab finder">×</button></form>
+    </header>
+    <div class="finder-toolbar"><button id="finder-filter-toggle" type="button" aria-expanded="false" aria-controls="finder-filter-wrap">Filter titles</button><button id="finder-refresh" type="button">Refresh</button></div>
+    <search id="finder-filter-wrap" class="finder-filter-wrap" hidden><label id="finder-filter-label" for="finder-filter">Filter titles</label><input id="finder-filter" type="search" placeholder="Optional: narrow this list…" autocomplete="off" autocapitalize="none" spellcheck="false"></search>
+    <div class="finder-layout">
+      <nav id="finder-domains" class="finder-domains" aria-label="Domains"></nav>
+      <section class="finder-results" aria-labelledby="finder-domain-title"><div class="finder-list-heading"><h3 id="finder-domain-title">All domains</h3><span id="finder-count">0 tabs</span></div><div id="finder-tabs" class="finder-tabs"></div><p id="finder-empty" class="finder-empty" hidden>No open tabs to show.</p></section>
+    </div>
+    <div class="finder-footer"><p id="finder-status" role="status" aria-live="polite" aria-atomic="true"></p><span>↑ ↓ move · Enter switch · Esc close</span></div>
+  </dialog>
 </body>
 </html>

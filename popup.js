@@ -1,6 +1,9 @@
 import { findDuplicateGroups } from './duplicates.js';
 import { getUndoTabs } from './cleanup.js';
 import { parkableTabs, getParkedTabs } from './parking.js';
+import { initTabFinder } from './tab-finder-ui.js';
+
+initTabFinder(chrome);
 
 const elements = Object.fromEntries(['refresh', 'arrange-domains', 'auto-arrange-domains', 'duplicate-count', 'summary-title', 'summary-detail', 'group-count', 'groups', 'empty', 'status', 'close-all', 'close-count', 'smart-matching', 'match-description', 'undo-cleanup', 'undo-count', 'duplicate-shield', 'shield-result', 'show-duplicates', 'show-parking', 'duplicates-panel', 'parking-panel', 'duplicate-actions', 'footer-hint', 'parked-count', 'park-search', 'park-age', 'park-inactive', 'shelf-count', 'shelf-results', 'parked-list', 'parking-empty', 'parkable-count', 'parkable-list'].map(id => [id, document.getElementById(id)]));
 let groups = [];
@@ -87,12 +90,13 @@ function renderOpenParkingTabs() {
 }
 
 function disableControls() {
-  document.querySelectorAll('button, input, select').forEach(control => { control.disabled = true; });
+  document.querySelectorAll('button, input, select').forEach(control => { if (!control.closest('#tab-finder')) control.disabled = true; });
 }
 
 function unlockControls() {
   document.querySelectorAll('input, select').forEach(control => { control.disabled = false; });
   for (const id of ['refresh', 'show-duplicates', 'show-parking']) elements[id].disabled = false;
+  document.getElementById('open-tab-finder').disabled = false;
 }
 
 function shelfRow(entry, openTab = false) {

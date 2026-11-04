@@ -3,6 +3,7 @@ import { refreshBadge } from './badge.js';
 import { shieldCreated, shieldUpdated, forgetShieldTab, configureShield } from './shield.js';
 import { parkableTabs, parkTabs, reopenParked, deleteParked } from './parking.js';
 import { arrangeDomains } from './domain-tabs.js';
+import { activateFinderTab } from './tab-finder.js';
 
 async function autoArrange(windowId) {
   try {
@@ -18,6 +19,7 @@ async function runShield(operation, value) {
 
 async function performAction(request) {
   switch (request.type) {
+    case 'focus-tab': return activateFinderTab(chrome, request.tabId);
     case 'close-duplicates': return performCleanup(chrome, request.tabs);
     case 'undo-cleanup': return undoCleanup(chrome);
     case 'set-shield': return configureShield(chrome, request.enabled);
@@ -47,7 +49,11 @@ async function updateBadge() {
 
 // The worker owns cleanup so it continues if the popup or its active tab closes.
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (sender.id !== chrome.runtime.id || !['close-duplicates', 'undo-cleanup', 'set-shield', 'park-tabs', 'park-inactive', 'reopen-parked', 'delete-parked', 'arrange-domains'].includes(request?.type)) return;
+  if (sender.id !== chrome.runtime.id || !['focus-tab', 'close-duplicates', 'undo-cleanup', 'set-shield', 'park-tabs', 'park-inactive', 'reopen-parked', 'delete-parked', 'arrange-domains'].includes(request?.type)) return;
+  if (request.type === 'focus-tab' && (!Number.isInteger(request.tabId) || request.tabId < 0)) {
+    sendResponse({ error: 'Invalid tab selection.' });
+    return;
+  }
   if (['close-duplicates', 'park-tabs'].includes(request.type) && (!Array.isArray(request.tabs) || request.tabs.some(tab => !Number.isInteger(tab?.id) || typeof tab.url !== 'string'))) {
     sendResponse({ error: 'Invalid tab selection.' });
     return;
