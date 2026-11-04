@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab Tidy</title>
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-mark" aria-hidden="true"><span></span><span></span></div>
+    <div class="brand"><h1>Tab Tidy</h1><p>A little room to focus.</p></div>
+    <button id="refresh" class="icon-button" type="button" aria-label="Scan tabs again" title="Scan tabs again">↻</button>
+  </header>
+  <nav class="view-switch" aria-label="Tab tools">
+    <button id="show-duplicates" type="button" aria-pressed="true" aria-controls="duplicates-panel">Duplicates</button>
+    <button id="show-parking" type="button" aria-pressed="false" aria-controls="parking-panel">Parking lot <span id="parked-count">0</span></button>
+  </nav>
+
+  <main>
+    <section id="duplicates-panel" aria-label="Duplicate cleaner">
+    <section class="summary" aria-labelledby="summary-title">
+      <div class="eyebrow"><span class="scope-dot" aria-hidden="true"></span> ALL CHROME WINDOWS</div>
+      <div class="summary-line"><strong id="duplicate-count">—</strong><div><h2 id="summary-title">Checking your tabs…</h2><p id="summary-detail">Finding matching URLs.</p></div></div>
+      <p class="keep-note"><span aria-hidden="true">✓</span> One copy of every URL stays open.</p>
+    </section>
+
+    <section class="domain-tools" aria-labelledby="domain-title">
+      <div class="domain-heading"><h2 id="domain-title">Domain siblings</h2><button id="arrange-domains" class="group-close" type="button" disabled>Group by domain</button></div>
+      <div class="matching-setting">
+        <div><label for="auto-arrange-domains">Keep same-domain tabs together</label><p id="domain-help">On by default. Arranges web tabs side by side in each window. Pinned tabs and existing tab groups stay in place.</p></div>
+        <input id="auto-arrange-domains" name="autoArrangeDomains" type="checkbox" aria-describedby="domain-help" checked>
+      </div>
+    </section>
+    <div class="matching-setting">
+      <div><label for="smart-matching">Ignore tracking parameters</label><p id="matching-help">Match links without utm_*, gclid, fbclid, and other known tracking tags.</p></div>
+      <input id="smart-matching" name="smartMatching" type="checkbox" aria-describedby="matching-help">
+    </div>
+    <div class="matching-setting">
+      <div><label for="duplicate-shield">Duplicate Shield</label><p id="shield-help">New duplicate links jump to the existing tab. <span id="shield-result">Off by default.</span></p></div>
+      <input id="duplicate-shield" name="duplicateShield" type="checkbox" aria-describedby="shield-help">
+    </div>
+    <div class="list-heading"><h2>Duplicate URLs <span id="group-count">0</span></h2><span id="match-description">Exact matches only</span></div>
+    <div id="groups" class="groups"></div>
+    <section id="empty" class="empty" hidden>
+      <div class="empty-mark" aria-hidden="true">✓</div>
+      <h2>Everything in its place.</h2>
+      <p>No duplicate URLs. Enjoy the breathing room.</p>
+    </section>
+    </section>
+    <section id="parking-panel" aria-labelledby="parking-title" hidden>
+      <div class="parking-intro"><p class="eyebrow">SAVE YOUR PLACE</p><h2 id="parking-title">A place for later.</h2><p>Park tabs now. Pick up where you left off later.</p></div>
+      <search class="shelf-search"><label for="park-search">Find a parked tab</label><input id="park-search" name="parkSearch" type="search" placeholder="Search title or URL" autocomplete="off" autocapitalize="none" spellcheck="false"></search>
+      <div class="parking-toolbar"><label for="park-age">Park tabs unused for</label><select id="park-age" name="parkAge"><option value="48">2+ days</option><option value="24">24+ hours</option><option value="0">Any time</option></select><button id="park-inactive" class="group-close" type="button" disabled>Park inactive</button></div>
+      <p class="parking-note">Active, pinned, and audio tabs stay open. Private links stay in session memory only.</p>
+      <div class="list-heading"><h2>Parked links <span id="shelf-count">0</span></h2><span id="shelf-results"></span></div>
+      <div id="parked-list" class="groups"></div>
+      <button id="show-more-parked" class="text-button show-more-list" type="button" aria-controls="parked-list" hidden>Show more</button>
+      <p id="parking-empty" class="parking-note">Your shelf is empty. Park a tab from the list below.</p>
+      <details id="open-tabs-details" class="open-tabs-details"><summary>Open tabs you can park <span id="parkable-count">0</span></summary><div id="parkable-list" class="groups"></div><button id="show-more-open" class="text-button show-more-list" type="button" aria-controls="parkable-list" hidden>Show more</button></details>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Scanning tabs…</p>
+  </main>
+
+  <footer>
+    <div id="duplicate-actions">
+    <button id="undo-cleanup" class="undo-button" type="button" hidden><span>↶ Undo last cleanup</span><span id="undo-count">0</span></button>
+    <button id="close-all" class="primary-button" type="button" disabled><span>Close all duplicate tabs</span><span id="close-count" class="button-count">0</span></button>
+    </div>
+    <p id="footer-hint">Pinned copy kept first, then an active copy.</p>
+  </footer>
+</body>
+</html>
