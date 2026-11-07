@@ -55,9 +55,12 @@ async function until(read, expected) {
     await page.locator('#open-tab-finder').click();
     const dialog = page.locator('#tab-finder');
     await until(() => dialog.isVisible(), true);
+    await until(async () => (await page.locator('#finder-tabs .finder-tab').count()) >= 11, true);
+    assert.equal(await page.locator('#finder-domain-title').textContent(), 'All domains');
+    assert.equal(await page.locator('#finder-filter').isVisible(), true, 'Search is visible on opening');
+    assert.equal(await page.locator('#finder-filter').evaluate(el => el === document.activeElement), true, 'Search starts focused');
+    await page.locator('#finder-domains button').filter({ hasText: '127.0.0.1' }).click();
     await until(() => page.locator('#finder-tabs .finder-tab').count(), 10);
-    assert.equal(await page.locator('#finder-domain-title').textContent(), '127.0.0.1');
-    assert.equal(await page.locator('#finder-filter').isVisible(), false, 'Browse without typing');
     assert.equal(await page.locator('#finder-tabs img').count(), 0, 'Titles are text, never HTML');
     assert.ok((await page.locator('#finder-tabs').textContent()).includes(unsafeTitle));
     assert.equal(await page.locator('.finder-tab-title').filter({ hasText: 'ENG-999' }).evaluate(el => el.scrollHeight <= el.clientHeight + 1), true, 'Long title is fully visible');
@@ -81,7 +84,6 @@ async function until(read, expected) {
     await page.locator('#finder-tabs .finder-tab').first().focus();
     await page.keyboard.press('ArrowDown');
     assert.equal(await page.locator('#finder-tabs .finder-tab').nth(1).evaluate(el => el === document.activeElement), true);
-    await page.locator('#finder-filter-toggle').click();
     await page.locator('#finder-filter').fill('ENG-8');
     await until(() => page.locator('#finder-tabs .finder-tab').count(), 1);
     await page.locator('#finder-filter').fill('missing-title');
@@ -146,7 +148,7 @@ async function until(read, expected) {
     assert.deepEqual(errors, []);
     const invalid = await page.evaluate(() => chrome.runtime.sendMessage({ type: 'focus-tab', tabId: 'not-an-id' }));
     assert.ok(invalid.error);
-    console.log('PASS: browse-first/current domain, full/escaped titles, optional filter, keyboard, live updates/removal, real cross-window focus, no navigation/closure, Escape/focus/size restoration, layout, accessibility, invalid selection.');
+    console.log('PASS: all domains/focused search, full/escaped titles, optional filter, keyboard, live updates/removal, real cross-window focus, no navigation/closure, Escape/focus/size restoration, layout, accessibility, invalid selection.');
   } finally {
     if (context) await context.close();
     await rm(profile, { recursive: true, force: true });

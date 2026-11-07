@@ -133,9 +133,13 @@ node scripts/finder-keyboard-smoke.cjs
 
 Browser tests use isolated profiles and disposable fixtures, leaving your usual Chrome tabs untouched. Set `CHROME_PATH` to a Chrome for Testing executable to use an existing browser installation.
 
-`npm run test:finder` is an additional finder integration suite; its opening-state assertions currently describe the earlier domain-first, hidden-search behavior and need updating for the current All domains / focused-search defaults.
+`npm run test:finder` checks All domains and focused-search defaults, keyboard navigation, live updates, cross-window switching, layout, and accessibility.
 
 Core files: `manifest.json` declares the extension; `background.js` coordinates tab actions; `popup.html`, `popup.css`, and `popup.js` implement the popup; `tab-finder-ui.js` implements finder interactions. Tests live in `tests/` and browser checks in `scripts/`.
+
+## Privacy policy
+
+Read the [privacy policy](PRIVACY.md) for data handling, storage, retention, and deletion details.
 
 ## License
 
