@@ -1,99 +1,146 @@
 # Tab Tidy
 
-A Chrome extension to browse open tabs by domain and full page title, find and close duplicates across **all Chrome windows**, prevent new duplicates with Shield, and save inactive tabs in a searchable parking lot. Includes Undo, a live toolbar count, and optional tracking-parameter matching.
+**Find the tab you need. Close duplicate copies. Save the rest for later.**
+
+Tab Tidy is a lightweight Chrome extension for managing tabs across all your windows. Browse by domain, search page titles and URLs, clean up duplicates, and park inactive tabs in a searchable list.
+
+**Chrome 127+ · No build required · Local processing · Personal, noncommercial use**
+
+![Tab Tidy finder showing open tabs grouped by domain](finder-preview.png)
+
+*Preview with demo tabs and a selected domain. The finder opens with All domains selected and search focused.*
+
+## Features
+
+- **Find any tab:** browse domains or search titles, URLs, and ticket IDs across windows. Long titles wrap, and results update as tabs change.
+- **Keyboard navigation:** open search with a shortcut, press ↓ to enter results, then Enter to switch tabs. Focused results have a visible outline and highlight.
+- **Duplicate cleanup:** close one extra copy, a whole duplicate group, or all duplicates. Keep one copy of each URL.
+- **Undo:** reopen tabs closed by the most recent cleanup, restoring their window, order, and pinned state where possible.
+- **Duplicate Shield:** optionally prevent newly opened duplicate web tabs by switching to the existing copy.
+- **Domain grouping:** keep tabs from the same hostname beside each other within each window, automatically or on demand.
+- **Parking lot:** save inactive tabs as links, then search, reopen, or delete them later.
+- **Toolbar badge:** see the number of extra duplicate tabs without opening the popup.
+
+## Previews
+
+| Duplicate cleanup | Parking lot |
+| --- | --- |
+| ![Duplicate cleanup view with a duplicate count and cleanup button](popup-preview.png) | ![Parking lot with search and a saved link](parking-preview.png) |
+
+*Screenshots use local demo pages.*
 
 ## Install
 
-1. Open `chrome://extensions` in Chrome.
-2. Enable **Developer mode** (top right).
-3. Click **Load unpacked** and select this folder, `close-duplicate-tabs`.
-4. Pin **Tab Tidy** from Chrome’s extensions menu, then click its icon.
+1. Download this repository using **Code → Download ZIP**, then extract it; or clone it with Git.
+2. Open `chrome://extensions` in Chrome 127 or newer.
+3. Turn on **Developer mode**.
+4. Choose **Load unpacked** and select the folder containing `manifest.json`.
+5. Pin **Tab Tidy** from Chrome’s extensions menu.
 
-No build or dependency installation needed. Chrome 127 or newer (for opening the popup from a shortcut).
+No dependency installation or build step is needed to use the extension. Keep the extracted folder in place while it is installed.
 
-The toolbar popup keeps a 420px minimum width and expands to 760px while the tab finder is open. Long titles and URLs wrap inside the available width.
+To update, replace the source files and click **Reload** on Tab Tidy’s card at `chrome://extensions`.
 
-Already installed? Reload Tab Tidy in `chrome://extensions`. Version 1.3 uses the existing `tabs` and `storage` permissions; no additional permissions are needed.
+## Find and switch tabs
 
-## Find a tab
+Click **Find a tab**, or use the shortcut below. Search starts focused and covers **All domains**. Choose a domain to narrow the results; clear the search to browse every tab in that domain.
 
-Click **Find a tab** to browse your open tabs without remembering a search term. The finder starts with the current tab's domain selected; **All domains** is used when the current page has no listed domain.
+| Key | Action |
+| --- | --- |
+| **⌘⇧K** on macOS / **Ctrl+Shift+K** on Windows and Linux | Open the finder |
+| **↓** from search | Focus the first result, including a single match |
+| **↑ / ↓** in results | Move between results |
+| **Home / End** in results | Focus the first / last result |
+| **Enter** on a result | Switch to that tab and focus its window |
+| **↑ / ↓**, **Home / End** in the domain sidebar | Select a domain |
+| **Tab / Shift+Tab** | Move between controls |
+| **Esc** | Close the finder |
 
-Press **⌘⇧K** on Mac or **Ctrl+Shift+K** on Windows/Linux while Chrome is active to open the finder directly, with search focused. Customize **Open domain search** at `chrome://extensions/shortcuts` (use **In Chrome** scope). If another shortcut already uses that combination, assign an available one there. Reload the extension after updating to register the command.
+Customize **Open domain search** at `chrome://extensions/shortcuts`, using **In Chrome** scope. If the default shortcut conflicts with another command, assign an available combination.
 
-- Select a domain on the left to see every matching tab's full title, URL, and window on the right. Long lists scroll; titles are never truncated or hidden behind Show more.
-- Click a title to activate that existing tab and focus its window. The finder does not navigate, reload, close, or rearrange tabs.
-- **Filter titles** optionally narrows the list by title, URL, or ticket ID. Hiding the filter clears it and restores all titles.
-- Domains show tab counts. Current-tab, private, pinned, loading, and audio states appear on rows. Subdomains remain separate; internal browser pages and local files have their own categories. Tab Tidy's own pages are excluded.
-- Titles and counts update as tabs open, close, navigate, or move. A vanished domain falls back to All domains. A closed selection shows an error and refreshes the list.
-- Use **Tab** to reach controls. In the domain sidebar, **↑/↓** selects the previous/next domain and **Home/End** selects the first/last. In the title list, those keys move between titles; **Enter** switches to the focused tab. **Esc** or **×** closes the finder and restores the normal popup width.
+The finder shows full titles, URLs, window labels, and current-tab, private, pinned, audio, and loading indicators. Switching tabs does not navigate, reload, or close them. Subdomains remain separate; browser pages and local files have their own categories.
 
-All grouping and optional filtering happen locally using existing tab metadata. No page content is read or captured.
+## Clean up duplicates
 
-## Use
+The duplicate count means **extra copies**: three tabs with the same URL count as two duplicates.
 
-The popup shows how many **extra tabs** can be closed, grouped by URL. Three tabs with the same URL count as two duplicates.
+- **Close** removes an individual copy.
+- **Close N** removes a URL group’s extra copies.
+- **Close all duplicate tabs** removes all listed extras.
+- **Undo last cleanup** reopens tabs from the most recent cleanup. A later cleanup replaces that recovery set; a cleanup that closes nothing preserves it.
 
-- **Close** beside a tab closes that individual copy.
-- **Close N** beside a URL closes that URL’s extra copies.
-- **Close all duplicate tabs** closes all listed extra copies.
-- **Undo last cleanup** reopens tabs closed by your most recent cleanup, including after you close and reopen the popup. A later cleanup replaces that Undo; a cleanup that closes nothing preserves it.
-- The **toolbar badge** shows the current extra-tab count even when the popup is closed. It disappears when there are no duplicates; hover over the icon for the full count and matching mode.
-- **Ignore tracking parameters** optionally groups HTTP(S) links that differ only by known tracking tags. The setting is remembered and also applies to the badge and cleanup.
-- Hover over a truncated URL to see its full value; refresh to scan again.
+Exact URL matching is the default. Enable **Ignore tracking parameters** to also match HTTP(S) URLs that differ only by `utm_*`, `gclid`, `dclid`, `fbclid`, `msclkid`, `mc_cid`, `mc_eid`, `_ga`, or `_gl`. Other parameters, their order and encoding, paths, protocols, and fragments remain significant. Original URLs are retained for Undo.
 
-## Domain siblings
+One copy remains per URL: a pinned copy is preferred, then an active copy, then the lowest tab ID. Multiple pinned copies may still be deduplicated. Tabs with pending navigation are skipped. Regular and private tabs are never combined; private browsing requires enabling the extension’s incognito access in Chrome.
 
-Click **Group by domain** in Duplicates to place tabs from the same hostname next to each other, separately within every window. For example, A1, B1, A2, B2 becomes A1, A2, B1, B2. Domain order follows its first appearance; each domain's tabs keep their relative order. Different subdomains remain separate; HTTP and HTTPS pages with the same hostname are siblings.
-
-**Keep same-domain tabs together** is checked by default and remembered on this device. It arranges tabs when they open, finish navigating, change domain, close, or move between windows, and at browser startup or extension installation/update. Turn it off for manual arrangement only; the button still works. Manual dragging is left alone until another tab event triggers arrangement.
-
-Pinned tabs, existing Chrome tab groups, internal pages, and tabs with pending navigation stay in place and form boundaries: siblings are arranged within each uninterrupted run of ordinary web tabs. Tabs are moved, never closed or reloaded; active tabs and separate windows stay intact. This uses the existing [Chrome Tabs API](https://developer.chrome.com/docs/extensions/reference/api/tabs) permission.
+**Undo restores links, not page state.** Reopened tabs load again; history, unsaved edits, scroll positions, and tab groups are not restored. Recovery survives closing the popup, but clears on browser restart or extension reload, disable, or update. Failed restores remain available to retry. Closing the last tab in a window can close that window.
 
 ## Duplicate Shield
 
-Enable **Duplicate Shield** in the Duplicates view. It is off by default. Opening a new HTTP(S) tab with a URL already open activates the existing copy and closes the new extra tab. Shield follows the exact/smart matching preference, favors existing pinned copies, and keeps regular and private browsing separate. It records a caught-duplicate count for the current browser session.
+Shield is **off by default**. Enable it to catch newly opened HTTP(S) duplicates, switch to an existing copy, and close the new extra tab. It follows your exact or tracking-parameter matching preference.
 
-Shield handles new blank tabs as they receive their first web URL, including redirects during the first load. It stops watching once that first page finishes or has loaded for 30 seconds, so ordinary navigation in an existing tab is left alone. Newly pinned, audible, or discarded tabs are skipped. Undo and intentional parking-lot reopens bypass Shield during their initial navigation.
+Shield watches a new tab’s initial navigation, including redirects, until the first page finishes loading or 30 seconds pass. Ordinary navigation in existing tabs is left alone. Newly pinned, audible, and discarded tabs are skipped. Intentional Undo and parking-lot reopens bypass Shield during initial navigation.
 
-## Tab parking lot
+## Group tabs by domain
 
-Choose **Parking lot** in the popup. **Park inactive** defaults to tabs unused for **2+ days**, as requested. The selector also offers 24+ hours or any currently inactive tab. Active tabs in each window, pinned tabs, playing audio, pending navigation, and non-HTTP(S) pages stay open. The inactivity cutoff is rechecked immediately before closing a tab.
+**Group by domain** places tabs with the same hostname next to each other within each window, preserving their relative order. Different subdomains remain separate; HTTP and HTTPS pages with the same hostname are siblings.
 
-- Expand **Open tabs you can park** to park a newer inactive tab individually.
+**Keep same-domain tabs together** is on by default and remembered on this device. Turn it off to arrange tabs manually. Automatic grouping runs on tab events and browser startup or extension installation/update; manual dragging is left alone until a later tab event.
+
+Pinned tabs, existing Chrome tab groups, internal pages, and pending navigations form boundaries. Grouping moves ordinary web tabs within those boundaries without closing or reloading them.
+
+## Park tabs for later
+
+Open **Parking lot**, choose an inactivity cutoff, then click **Park inactive**. The default is **2+ days**; options also include 24+ hours and any currently inactive tab.
+
+Active tabs in each window, pinned tabs, playing audio, pending navigations, and non-HTTP(S) pages stay open. Each link is saved before its tab closes. You can also park an individual tab under **Open tabs you can park**.
+
 - Search saved links by title or URL.
-- Open-tab and parked-link lists start with five rows; **Show more** reveals the next five. Long titles wrap, and long URLs show two wrapped lines with **Show more / Show less** for the full URL.
-- **Reopen** opens the original URL, or focuses an existing exact-URL copy, then removes the saved entry.
-- **Delete** removes a saved link without affecting open tabs.
+- **Reopen** opens the original URL or focuses an existing exact-URL copy, then removes the saved entry.
+- **Delete** removes only the saved link.
+- Repeated exact URLs share one saved entry.
 
-A link is saved successfully before its tab is closed. Repeated copies of the same exact URL share one saved entry. Normal parked links remain on this device across popup closure, browser restarts, and extension updates until reopened, deleted, or the extension is uninstalled. Private parked links remain only in session memory and disappear on browser restart or extension reload/disable/update. Parking saves links, not page history, unsaved edits, scroll position, or tab groups. Parking and Shield do not replace the manual cleanup Undo.
-
-## Matching and Undo
-
-One copy stays open for each URL: pinned first, then active, then the lowest tab ID. If several pinned copies share a URL, only one is kept. Exact matching is the default: query strings, fragments, paths, and protocols must match exactly. Tabs with pending navigation are skipped until navigation finishes. Regular and incognito tabs are never combined. Incognito is excluded unless you enable it in Chrome’s extension settings.
-
-Smart matching removes `utm_*`, `gclid`, `dclid`, `fbclid`, `msclkid`, `mc_cid`, `mc_eid`, `_ga`, and `_gl` parameters when comparing HTTP(S) URLs. Other parameters, their order and encoding, paths, protocols, and fragments stay significant. Tabs retain their actual URLs; Undo reopens those original URLs. The popup shows each tab’s URL when smart matching is enabled.
-
-Undo preserves tab order, pinned state, and the original window where possible; if cleanup closed a window, Undo recreates it. Tabs reopen as new page loads: page history, unsaved form state, scroll positions, and tab groups are not restored. Failed restores remain available for retry. Undo data is cleared by browser restart or extension reload, disable, or update.
-
-The list updates while the popup is open. Tabs are checked again before every close; tabs that navigated or became the last copy are skipped. Cleanup continues if the popup closes. Closing the last tab in a window may close that window. Chrome’s usual **Ctrl+Shift+T** / **Cmd+Shift+T** can reopen recently closed tabs.
+Normal parked links stay on this device until reopened, deleted, or the extension is uninstalled. Private parked links remain only in session storage and disappear on browser restart or extension reload, disable, or update. Parking saves links, not history or unsaved page state, and does not replace cleanup Undo.
 
 ## Privacy and permissions
 
-The `tabs` permission reads URLs, titles, activity, and audio/pin state for matching, Shield, and parking ([Chrome Tabs API](https://developer.chrome.com/docs/extensions/reference/api/tabs)). The `storage` permission saves preferences and normal parked links (URL, title, saved time, original window/position) locally. The last cleanup’s recovery data, Shield’s candidate/bypass tab IDs and caught count, and private parked links stay in temporary session memory ([Chrome Storage API](https://developer.chrome.com/docs/extensions/reference/api/storage)). Successful Undo removes its temporary backup. All processing stays on your device. No content scripts, remote resources, analytics, or extension network requests.
+Tab Tidy processes tab information locally. It has no content scripts, analytics, remote resources, or extension network requests. It does not read or capture page content.
 
-## Verify
+| Permission | Purpose |
+| --- | --- |
+| `tabs` | Read tab titles, URLs, and tab state; switch, arrange, close, and reopen tabs. |
+| `storage` | Save preferences and normal parked links locally; keep temporary recovery, Shield, and private parked-link data in session storage. |
 
-From the source folder, run `npm test` (Node.js 18+). Tests cover exact/smart matching, cross-window cleanup, Undo and interrupted-worker recovery, Shield navigation/bypass/protected tabs, parking storage failures and age revalidation, private-tab storage, and reopen/delete behavior.
+Normal parked entries contain the URL, title, saved time, and original window/position. There is no account or cloud synchronization. Reopening a saved link loads the destination website normally.
 
-For actual Chrome integration and accessibility checks, run `npm install`, `npx playwright install chromium`, then `npm run test:browser`. The test creates disposable pages on a local HTTP server and an isolated browser profile; your usual Chrome tabs are untouched. Optionally set `CHROME_PATH` to a Chrome for Testing executable. Browser tests also verify the badge, saved preferences, concurrency, popup closure, Shield, intentional Undo, the two-day parking default, manual/bulk parking, live search, and reopen/delete.
+## Development
 
-The matching checkbox follows Modern Web Guidance’s `forms` guidance: “always associate `<label>` with its input using `for` and `id`” and “use `accent-color` for quick branding of native radios/checkboxes.” It uses native keyboard interaction and a visible focus ring.
+Use **Node.js 18+** for the unit tests:
 
-The `typography` guidance recommends “Use `overflow-wrap: break-word` (or `anywhere`) to contain long URLs.” Cards use `overflow-wrap: anywhere` and grid tracks that can shrink so long links cannot create a horizontal scrollbar.
+```sh
+npm test
+```
 
-`npm run test:finder` checks the finder with real Chrome tabs: current-domain selection, full titles, optional filtering, keyboard interaction, live updates, closed-tab recovery, cross-window switching without navigation, layout, and accessibility. `npm run test:popup-size` checks Chrome’s actual toolbar popup, including expansion to 760px and size/focus restoration after closing the finder.
+For browser integration tests, install the development dependencies and Playwright’s Chromium:
 
-The finder follows Modern Web Guidance's `dialog` guidance: “Use the native `<dialog>` element” and “DON'T add `role="dialog"`, `aria-modal`, a focus trap”. Chrome provides modal focus handling and Escape; the finder includes a visible close button, an accessible heading, and scroll containment.
+```sh
+npm install
+npx playwright install chromium
+npm run test:browser
+npm run test:popup-size
+node scripts/finder-keyboard-smoke.cjs
+```
 
-Manual Chrome check: open three copies of one URL in two windows, plus a different query string or fragment. The popup should report two duplicates. Close one individually, then close all; the unique URL and one matching copy should remain. Repeat with a pinned copy, and check the empty state after cleanup.
+Browser tests use isolated profiles and disposable fixtures, leaving your usual Chrome tabs untouched. Set `CHROME_PATH` to a Chrome for Testing executable to use an existing browser installation.
+
+`npm run test:finder` is an additional finder integration suite; its opening-state assertions currently describe the earlier domain-first, hidden-search behavior and need updating for the current All domains / focused-search defaults.
+
+Core files: `manifest.json` declares the extension; `background.js` coordinates tab actions; `popup.html`, `popup.css`, and `popup.js` implement the popup; `tab-finder-ui.js` implements finder interactions. Tests live in `tests/` and browser checks in `scripts/`.
+
+## License
+
+Copyright © 2026 Srinivas Reddy.
+
+Available under the [Tab Tidy Personal Noncommercial License](LICENSE). You may use, study, modify, and share the software for personal, noncommercial purposes under its terms. Commercial use requires separate written permission from the copyright holder.
+
+This is a **source-available** project, not MIT-licensed or an OSI-approved open-source project. The standard [MIT License](https://opensource.org/license/mit) permits commercial use; this project’s license intentionally does not.
