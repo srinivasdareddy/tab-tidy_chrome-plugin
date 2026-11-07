@@ -4,6 +4,9 @@ import { parkableTabs, getParkedTabs } from './parking.js';
 import { initTabFinder } from './tab-finder-ui.js';
 
 initTabFinder(chrome);
+if (new URLSearchParams(location.search).get('view') === 'finder') {
+  document.getElementById('open-tab-finder').click();
+}
 
 const elements = Object.fromEntries(['refresh', 'arrange-domains', 'auto-arrange-domains', 'duplicate-count', 'summary-title', 'summary-detail', 'group-count', 'groups', 'empty', 'status', 'close-all', 'close-count', 'smart-matching', 'match-description', 'undo-cleanup', 'undo-count', 'duplicate-shield', 'shield-result', 'show-duplicates', 'show-parking', 'duplicates-panel', 'parking-panel', 'duplicate-actions', 'footer-hint', 'parked-count', 'park-search', 'park-age', 'park-inactive', 'shelf-count', 'shelf-results', 'parked-list', 'parking-empty', 'parkable-count', 'parkable-list'].map(id => [id, document.getElementById(id)]));
 let groups = [];

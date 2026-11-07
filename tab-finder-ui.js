@@ -1,4 +1,4 @@
-import { finderDomain, groupFinderTabs, filterFinderTabs } from './tab-finder.js';
+import { groupFinderTabs, filterFinderTabs } from './tab-finder.js';
 
 export function initTabFinder(browser) {
   const byId = id => document.getElementById(id);
@@ -107,8 +107,7 @@ export function initTabFinder(browser) {
       else anchor = tabs.find(tab => tab.active && tab.windowId === anchor?.windowId) ?? anchor;
       groups = groupFinderTabs(tabs, browser.runtime.getURL(''));
       if (!initialized) {
-        const currentDomain = current && finderDomain(current);
-        domain = groups.some(group => group.domain === currentDomain) ? currentDomain : null;
+        domain = null;
         initialized = true;
       } else if (domain !== null && !groups.some(group => group.domain === domain)) domain = null;
       render();
@@ -151,11 +150,12 @@ export function initTabFinder(browser) {
     groups = [];
     domain = null;
     filter.value = '';
-    filterWrap.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
+    filterWrap.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
     document.documentElement.classList.add('finder-open');
     dialog.showModal();
     render();
+    filter.focus();
     announce('Reading open tabs…');
     anchorPromise = browser.tabs.query({ active: true, currentWindow: true });
     void refresh();

@@ -16,6 +16,9 @@ const assert = require('node:assert/strict');
   });
   try {
     const page = await context.newPage();
+    await page.goto(`chrome-extension://${id}/popup.html?view=finder`);
+    await page.waitForFunction(() => document.getElementById('tab-finder').open, null, { timeout: 3000 });
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'finder-filter', 'Shortcut launch focuses search');
     await page.goto(`chrome-extension://${id}/popup.html`);
     const client = await context.newCDPSession(page);
     const current = (await client.send('Target.getTargetInfo')).targetInfo.targetId;
@@ -86,6 +89,19 @@ const assert = require('node:assert/strict');
     }
     await page.setViewportSize({ width: 160, height: 600 });
     assert.equal(await page.evaluate(() => document.body.getBoundingClientRect().width), 420);
+    await client.send('Target.closeTarget', { targetId: popup.targetId });
+    const worker = context.serviceWorkers()[0] || await context.waitForEvent('serviceworker');
+    const commands = await worker.evaluate(() => chrome.commands.getAll());
+    assert.ok(commands.some(command => command.name === 'open-tab-finder' && command.shortcut), 'Finder shortcut must register in Chrome');
+    await page.evaluate(async () => {
+      const { handleCommand } = await import(chrome.runtime.getURL('finder-shortcut.js'));
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      await handleCommand('open-tab-finder', tab);
+      const popup = await chrome.action.getPopup({ tabId: tab.id });
+      if (popup !== chrome.runtime.getURL('popup.html')) throw new Error('Shortcut must restore normal toolbar popup');
+    });
+    const finderPopup = (await client.send('Target.getTargets')).targetInfos.find(target => target.url.endsWith('/popup.html?view=finder'));
+    assert.ok(finderPopup, 'Command must open an actual finder toolbar popup');
     console.log('PASS: actual toolbar stays 420px, expands to 760px for finder, restores size/focus on close, and fits all content.');
   } finally {
     await context.close();

@@ -4,6 +4,11 @@ import { shieldCreated, shieldUpdated, forgetShieldTab, configureShield } from '
 import { parkableTabs, parkTabs, reopenParked, deleteParked } from './parking.js';
 import { arrangeDomains } from './domain-tabs.js';
 import { activateFinderTab } from './tab-finder.js';
+import { handleCommand } from './finder-shortcut.js';
+
+chrome.commands.onCommand.addListener((command, tab) => {
+  void handleCommand(command, tab).catch(error => console.warn('Could not open domain search:', error));
+});
 
 async function autoArrange(windowId) {
   try {

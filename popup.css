@@ -123,6 +123,7 @@ html.finder-open, html.finder-open body { width: 760px; min-width: 760px; height
 .finder-tab { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; padding: 10px 17px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; }
 .finder-tab:hover { background: #f2f6ef; }
 .finder-tab[aria-current="page"] { background: #edf3e9; }
+.finder-tab:focus-visible { background: #e6efe2; outline-offset: -3px; }
 .finder-tab:disabled { cursor: progress; }
 .finder-tab-info { flex: 1; min-width: 0; }
 .finder-tab-title { display: block; font-size: 14px; line-height: 1.45; font-weight: 500; white-space: normal; overflow-wrap: anywhere; margin-bottom: 3px; }

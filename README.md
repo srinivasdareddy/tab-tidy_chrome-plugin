@@ -9,7 +9,7 @@ A Chrome extension to browse open tabs by domain and full page title, find and c
 3. Click **Load unpacked** and select this folder, `close-duplicate-tabs`.
 4. Pin **Tab Tidy** from Chrome’s extensions menu, then click its icon.
 
-No build or dependency installation needed. Chrome 121 or newer (for tab inactivity timestamps).
+No build or dependency installation needed. Chrome 127 or newer (for opening the popup from a shortcut).
 
 The toolbar popup keeps a 420px minimum width and expands to 760px while the tab finder is open. Long titles and URLs wrap inside the available width.
 
@@ -18,6 +18,8 @@ Already installed? Reload Tab Tidy in `chrome://extensions`. Version 1.3 uses th
 ## Find a tab
 
 Click **Find a tab** to browse your open tabs without remembering a search term. The finder starts with the current tab's domain selected; **All domains** is used when the current page has no listed domain.
+
+Press **⌘⇧K** on Mac or **Ctrl+Shift+K** on Windows/Linux while Chrome is active to open the finder directly, with search focused. Customize **Open domain search** at `chrome://extensions/shortcuts` (use **In Chrome** scope). If another shortcut already uses that combination, assign an available one there. Reload the extension after updating to register the command.
 
 - Select a domain on the left to see every matching tab's full title, URL, and window on the right. Long lists scroll; titles are never truncated or hidden behind Show more.
 - Click a title to activate that existing tab and focus its window. The finder does not navigate, reload, close, or rearrange tabs.
